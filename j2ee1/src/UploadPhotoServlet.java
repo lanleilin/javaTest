@@ -1,32 +1,3 @@
-//import java.io.IOException;
-// 
-//import javax.servlet.ServletException;
-//import javax.servlet.http.HttpServlet;
-//import javax.servlet.http.HttpServletRequest;
-//import javax.servlet.http.HttpServletResponse;
-// 
-//public class LoginServlet extends HttpServlet {
-// 
-//    private static final long serialVersionUID = 1L;
-// 
-//    protected void service(HttpServletRequest request, HttpServletResponse response)
-//            throws ServletException, IOException {
-// 
-//        String name = request.getParameter("name");
-//        String password = request.getParameter("password");
-// 
-//        if ("admin".equals(name) && "123".equals(password)) {
-//            request.getRequestDispatcher("success.html").forward(request, response);
-//        }
-//        else{
-//            response.sendRedirect("fail.html");
-//        }
-// 
-//    }
-// 
-//}
-
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -34,53 +5,55 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.Iterator;
 import java.util.List;
-  
+ 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-  
+ 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
-  
+ 
 public class UploadPhotoServlet extends HttpServlet {
-  
+ 
     public void doPost(HttpServletRequest request, HttpServletResponse response) {
-  
+ 
         String filename = null;
         try {
             DiskFileItemFactory factory = new DiskFileItemFactory();
             ServletFileUpload upload = new ServletFileUpload(factory);
-            // è®¾ç½®ä¸Šä¼ æ–‡ä»¶çš„å¤§å°é™åˆ¶ä¸º1M
+            // ÉèÖÃÉÏ´«ÎÄ¼şµÄ´óĞ¡ÏŞÖÆÎª1M
             factory.setSizeThreshold(1024 * 1024);
-             
+            
             List items = null;
             try {
                 items = upload.parseRequest(request);
             } catch (FileUploadException e) {
                 e.printStackTrace();
             }
-  
+ 
+
+ 
             Iterator iter = items.iterator();
             while (iter.hasNext()) {
                 FileItem item = (FileItem) iter.next();
                 if (!item.isFormField()) {
-  
-                    // æ ¹æ®æ—¶é—´æˆ³åˆ›å»ºå¤´åƒæ–‡ä»¶
+ 
+                    // ¸ù¾İÊ±¼ä´Á´´½¨Í·ÏñÎÄ¼ş
                     filename = System.currentTimeMillis() + ".jpg";
-                     
-                    //é€šè¿‡getRealPathè·å–ä¸Šä¼ æ–‡ä»¶å¤¹ï¼Œå¦‚æœé¡¹ç›®åœ¨e:/project/j2ee/web,é‚£ä¹ˆå°±ä¼šè‡ªåŠ¨è·å–åˆ° e:/project/j2ee/web/uploaded
+                    
+                    //Í¨¹ıgetRealPath»ñÈ¡ÉÏ´«ÎÄ¼ş¼Ğ£¬Èç¹ûÏîÄ¿ÔÚe:/project/j2ee/web,ÄÇÃ´¾Í»á×Ô¶¯»ñÈ¡µ½ e:/project/j2ee/web/uploaded
                     String photoFolder =request.getServletContext().getRealPath("uploaded");
-                     
+                    
                     File f = new File(photoFolder, filename);
                     f.getParentFile().mkdirs();
-  
-                    // é€šè¿‡item.getInputStream()è·å–æµè§ˆå™¨ä¸Šä¼ çš„æ–‡ä»¶çš„è¾“å…¥æµ
+ 
+                    // Í¨¹ıitem.getInputStream()»ñÈ¡ä¯ÀÀÆ÷ÉÏ´«µÄÎÄ¼şµÄÊäÈëÁ÷
                     InputStream is = item.getInputStream();
-  
-                    // å¤åˆ¶æ–‡ä»¶
+ 
+                    // ¸´ÖÆÎÄ¼ş
                     FileOutputStream fos = new FileOutputStream(f);
                     byte b[] = new byte[1024 * 1024];
                     int length = 0;
@@ -88,21 +61,23 @@ public class UploadPhotoServlet extends HttpServlet {
                         fos.write(b, 0, length);
                     }
                     fos.close();
-  
+ 
                 } else {
-                    System.out.println(item.getFieldName());
+                	System.out.println(item.getFieldName());
                     String value = item.getString();
                     value = new String(value.getBytes("ISO-8859-1"), "UTF-8");
                     System.out.println(value);
                 }
             }
-             
+            
             String html = "<img width='200' height='150' src='uploaded/%s' />";
             response.setContentType("text/html");
             PrintWriter pw= response.getWriter();
-             
+            
             pw.format(html, filename);
-             
+            
+ 
+            
         } catch (FileNotFoundException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
