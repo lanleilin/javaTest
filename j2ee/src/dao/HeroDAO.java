@@ -22,7 +22,7 @@ public class HeroDAO {
     }
  
     public Connection getConnection() throws SQLException {
-        return DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/my_test_db?characterEncoding=UTF-8", "root",
+        return DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/how2java?characterEncoding=UTF-8", "root",
                 "admin");
     }
  
